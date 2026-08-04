@@ -10,9 +10,10 @@ import "../../config/env.js";
 import mongoose from "mongoose";
 import config from "../../config/index.js";
 import { logger } from "../../config/logger.js";
+import { seedEuroParcsCatalog } from "./europarcsSeed.js";
 import { seedUsers } from "./userSeed.js";
 
-const seeds = [seedUsers];
+const seeds = [seedUsers, seedEuroParcsCatalog];
 
 if (!config.mongodbUrl) {
     logger.error("❌ MONGODB_URL is not set. Cannot run seeds.");

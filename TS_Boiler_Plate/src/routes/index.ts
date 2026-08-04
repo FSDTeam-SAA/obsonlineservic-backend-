@@ -1,7 +1,19 @@
 
 
 import { Router } from 'express';
+import {
+    AccommodationRoutes,
+    AdminAccommodationRoutes,
+} from '../modules/accommodation/accommodation.route.js';
 import { AuthRoutes } from '../modules/auth/auth.route.js';
+import {
+    AdminContentRoutes,
+    ContactRoutes,
+    ContentRoutes,
+    FaqRoutes,
+} from '../modules/content/content.route.js';
+import { EuroParcsRoutes } from '../modules/europarcs/europarcs.route.js';
+import { AdminParkRoutes, ParkRoutes } from '../modules/park/park.route.js';
 import { UserRoutes } from '../modules/user/user.route.js';
 import { rootRouter } from './root.routes.js';
 import { healthRouter } from './health.route.js';
@@ -24,6 +36,42 @@ const moduleRoutes = [
     {
         path: '/system',
         route: systemRouter,
+    },
+    {
+        path: '/europarcs',
+        route: EuroParcsRoutes,
+    },
+    {
+        path: '/parks',
+        route: ParkRoutes,
+    },
+    {
+        path: '/accommodations',
+        route: AccommodationRoutes,
+    },
+    {
+        path: '/content',
+        route: ContentRoutes,
+    },
+    {
+        path: '/faq',
+        route: FaqRoutes,
+    },
+    {
+        path: '/contact',
+        route: ContactRoutes,
+    },
+    {
+        path: '/admin/parks',
+        route: AdminParkRoutes,
+    },
+    {
+        path: '/admin/accommodations',
+        route: AdminAccommodationRoutes,
+    },
+    {
+        path: '/admin/content',
+        route: AdminContentRoutes,
     },
     {
         path: '/auth',
