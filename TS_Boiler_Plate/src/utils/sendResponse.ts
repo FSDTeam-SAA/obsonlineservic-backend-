@@ -36,6 +36,6 @@ export function sendResponse<TData, TExtras extends Record<string, unknown> = Re
         ...(resolvedRequestId ? { requestId: resolvedRequestId } : {}),
         ...(data === undefined ? {} : { data }),
         ...(meta === undefined ? {} : { meta }),
-        ...(extras === undefined ? { extras } : {}),
+        ...(extras === undefined ? {} : { extras }),
     });
 }

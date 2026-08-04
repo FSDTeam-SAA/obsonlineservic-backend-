@@ -1,7 +1,9 @@
 import { logger } from "../../config/logger.js";
 import { AccommodationType, AccommodationUnit } from "../../modules/accommodation/accommodation.model.js";
+import { AvailabilityBlock } from "../../modules/availability/availability.model.js";
 import { ContentPage, FaqItem } from "../../modules/content/content.model.js";
 import { DestinationTheme, Facility, HolidayPark } from "../../modules/park/park.model.js";
+import { Extra, Offer, RatePlan } from "../../modules/pricing/pricing.model.js";
 
 export async function seedEuroParcsCatalog(): Promise<void> {
     await Facility.updateOne(
@@ -382,6 +384,135 @@ export async function seedEuroParcsCatalog(): Promise<void> {
                     currency: "EUR",
                     isActive: true,
                     isPublished: true,
+                },
+            },
+            { upsert: true }
+        );
+
+        const seededHolidayHome = await AccommodationUnit.findOne({ unitCode: "EDL-HH-001" }).lean();
+        if (seededHolidayHome) {
+            await RatePlan.updateOne(
+                { slug: "demo-lake-comfort-home-standard-2026" },
+                {
+                    $setOnInsert: {
+                        name: "Demo Lake Comfort Home Standard 2026",
+                        slug: "demo-lake-comfort-home-standard-2026",
+                        accommodationUnitSlug: "comfort-holiday-home-6-demo-lake",
+                        accommodationTypeSlug: "comfort-holiday-home",
+                        parkSlug: "europarcs-demo-lake",
+                        seasonName: "Standard season",
+                        startDate: new Date("2026-01-01T00:00:00.000Z"),
+                        endDate: new Date("2026-12-31T00:00:00.000Z"),
+                        nightlyPrice: 129,
+                        currency: "EUR",
+                        minimumStayNights: 2,
+                        allowedArrivalDays: [0, 1, 2, 3, 4, 5, 6],
+                        allowedDepartureDays: [0, 1, 2, 3, 4, 5, 6],
+                        taxRate: 0.09,
+                        cleaningFee: 55,
+                        linenFee: 25,
+                        depositAmount: 150,
+                        isActive: true,
+                    },
+                },
+                { upsert: true }
+            );
+
+            await AvailabilityBlock.updateOne(
+                {
+                    accommodationUnitSlug: "comfort-holiday-home-6-demo-lake",
+                    startDate: new Date("2026-12-24T00:00:00.000Z"),
+                    endDate: new Date("2026-12-28T00:00:00.000Z"),
+                },
+                {
+                    $setOnInsert: {
+                        accommodationUnitId: String(seededHolidayHome._id),
+                        accommodationUnitSlug: "comfort-holiday-home-6-demo-lake",
+                        parkSlug: "europarcs-demo-lake",
+                        startDate: new Date("2026-12-24T00:00:00.000Z"),
+                        endDate: new Date("2026-12-28T00:00:00.000Z"),
+                        type: "MAINTENANCE",
+                        reason: "Demo unavailable period for availability search checks.",
+                        isActive: true,
+                    },
+                },
+                { upsert: true }
+            );
+        }
+    }
+
+    await RatePlan.updateOne(
+        { slug: "demo-lake-campsite-standard-2026" },
+        {
+            $setOnInsert: {
+                name: "Demo Lake Campsite Standard 2026",
+                slug: "demo-lake-campsite-standard-2026",
+                accommodationUnitSlug: "comfort-campsite-pitch-demo-lake",
+                accommodationTypeSlug: "comfort-campsite-pitch",
+                parkSlug: "europarcs-demo-lake",
+                seasonName: "Camping standard season",
+                startDate: new Date("2026-01-01T00:00:00.000Z"),
+                endDate: new Date("2026-12-31T00:00:00.000Z"),
+                nightlyPrice: 39,
+                currency: "EUR",
+                minimumStayNights: 1,
+                allowedArrivalDays: [0, 1, 2, 3, 4, 5, 6],
+                allowedDepartureDays: [0, 1, 2, 3, 4, 5, 6],
+                taxRate: 0.09,
+                cleaningFee: 0,
+                linenFee: 0,
+                depositAmount: 50,
+                isActive: true,
+            },
+        },
+        { upsert: true }
+    );
+
+    await Offer.updateOne(
+        { slug: "early-bird-demo-2026" },
+        {
+            $setOnInsert: {
+                name: "Early bird demo offer",
+                code: "EARLY2026",
+                slug: "early-bird-demo-2026",
+                discountType: "EARLY_BIRD",
+                valueType: "PERCENTAGE",
+                value: 0.1,
+                startDate: new Date("2026-01-01T00:00:00.000Z"),
+                endDate: new Date("2026-12-31T00:00:00.000Z"),
+                parkSlugs: ["europarcs-demo-lake"],
+                accommodationTypeSlugs: [],
+                accommodationUnitSlugs: [],
+                minimumNights: 2,
+                isActive: true,
+            },
+        },
+        { upsert: true }
+    );
+
+    const extras = [
+        { name: "Comfort package", slug: "comfort-package", priceMode: "PER_STAY", price: 29 },
+        { name: "Deluxe package", slug: "deluxe-package", priceMode: "PER_STAY", price: 59 },
+        { name: "Towel package", slug: "towel-package", priceMode: "PER_GUEST", price: 7.5 },
+        { name: "Kitchen towel package", slug: "kitchen-towel-package", priceMode: "PER_STAY", price: 5 },
+        { name: "Playpen", slug: "playpen", priceMode: "PER_STAY", price: 8 },
+        { name: "High chair", slug: "high-chair", priceMode: "PER_STAY", price: 8 },
+        { name: "Camping bed", slug: "camping-bed", priceMode: "PER_STAY", price: 12 },
+        { name: "Extra sheet package", slug: "extra-sheet-package", priceMode: "PER_GUEST", price: 9 },
+        { name: "Early check-in", slug: "early-check-in", priceMode: "PER_STAY", price: 25 },
+        { name: "Preferred house number", slug: "preferred-house-number", priceMode: "PER_STAY", price: 35 },
+        { name: "Flexibility guarantee", slug: "flexibility-guarantee", priceMode: "PER_STAY", price: 19 },
+    ] as const;
+
+    for (const extra of extras) {
+        await Extra.updateOne(
+            { slug: extra.slug },
+            {
+                $setOnInsert: {
+                    ...extra,
+                    currency: "EUR",
+                    isMandatory: false,
+                    isActive: true,
                 },
             },
             { upsert: true }

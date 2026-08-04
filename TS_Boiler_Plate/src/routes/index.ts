@@ -5,7 +5,13 @@ import {
     AccommodationRoutes,
     AdminAccommodationRoutes,
 } from '../modules/accommodation/accommodation.route.js';
+import { AdminAvailabilityRoutes } from '../modules/availability/availability.route.js';
 import { AuthRoutes } from '../modules/auth/auth.route.js';
+import {
+    AdminBookingRoutes,
+    BookingRoutes,
+    CustomerBookingRoutes,
+} from '../modules/booking/booking.route.js';
 import {
     AdminContentRoutes,
     ContactRoutes,
@@ -14,6 +20,12 @@ import {
 } from '../modules/content/content.route.js';
 import { EuroParcsRoutes } from '../modules/europarcs/europarcs.route.js';
 import { AdminParkRoutes, ParkRoutes } from '../modules/park/park.route.js';
+import {
+    AdminPricingRoutes,
+    ExtrasRoutes,
+    PricingRoutes,
+} from '../modules/pricing/pricing.route.js';
+import { SearchRoutes } from '../modules/search/search.route.js';
 import { UserRoutes } from '../modules/user/user.route.js';
 import { rootRouter } from './root.routes.js';
 import { healthRouter } from './health.route.js';
@@ -50,6 +62,26 @@ const moduleRoutes = [
         route: AccommodationRoutes,
     },
     {
+        path: '/search',
+        route: SearchRoutes,
+    },
+    {
+        path: '/pricing',
+        route: PricingRoutes,
+    },
+    {
+        path: '/bookings',
+        route: BookingRoutes,
+    },
+    {
+        path: '/customer/bookings',
+        route: CustomerBookingRoutes,
+    },
+    {
+        path: '/extras',
+        route: ExtrasRoutes,
+    },
+    {
         path: '/content',
         route: ContentRoutes,
     },
@@ -68,6 +100,18 @@ const moduleRoutes = [
     {
         path: '/admin/accommodations',
         route: AdminAccommodationRoutes,
+    },
+    {
+        path: '/admin/availability',
+        route: AdminAvailabilityRoutes,
+    },
+    {
+        path: '/admin/pricing',
+        route: AdminPricingRoutes,
+    },
+    {
+        path: '/admin/bookings',
+        route: AdminBookingRoutes,
     },
     {
         path: '/admin/content',

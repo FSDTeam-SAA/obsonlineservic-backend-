@@ -1,5 +1,6 @@
 import { logger } from "../config/logger.js";
 import { messageBus } from "../messaging/messageBus.js";
+import { BookingService } from "../modules/booking/booking.service.js";
 import type Stripe from "stripe";
 
 type StripeEventHandler = (event: Stripe.Event) => Promise<void>;
@@ -24,6 +25,8 @@ async function enqueueWorkflow(event: Stripe.Event, jobName: string) {
 
 const handlers: Record<string, StripeEventHandler> = {
     "payment_intent.succeeded": async (event) => {
+        const intent = event.data.object as Stripe.PaymentIntent;
+        await BookingService.markBookingPaidByPaymentIntent(intent.id);
         await enqueueWorkflow(event, "payment.intent.succeeded");
     },
     "checkout.session.completed": async (event) => {
