@@ -57,11 +57,33 @@ function handleOAuthSuccess(req: Express.Request, res: import("express").Respons
 
 // ── Google OAuth ─────────────────────────────────────────────────────
 
+/**
+ * @openapi
+ * /auth/google:
+ *   get:
+ *     summary: GET /auth/google
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     "/google",
     passport.authenticate("google", { scope: ["profile", "email"], session: false })
 );
 
+/**
+ * @openapi
+ * /auth/google/callback:
+ *   get:
+ *     summary: GET /auth/google/callback
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     "/google/callback",
     passport.authenticate("google", { session: false, failureRedirect: "/api/v1/auth/login" }),
@@ -70,11 +92,33 @@ router.get(
 
 // ── GitHub OAuth ─────────────────────────────────────────────────────
 
+/**
+ * @openapi
+ * /auth/github:
+ *   get:
+ *     summary: GET /auth/github
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     "/github",
     passport.authenticate("github", { scope: ["user:email"], session: false })
 );
 
+/**
+ * @openapi
+ * /auth/github/callback:
+ *   get:
+ *     summary: GET /auth/github/callback
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     "/github/callback",
     passport.authenticate("github", { session: false, failureRedirect: "/api/v1/auth/login" }),

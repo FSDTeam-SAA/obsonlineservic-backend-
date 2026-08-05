@@ -8,6 +8,17 @@ import { sendResponse } from "../utils/sendResponse.js";
 
 export const systemRouter = Router();
 
+/**
+ * @openapi
+ * /system/capabilities:
+ *   get:
+ *     summary: GET /system/capabilities
+ *     tags:
+ *       - System
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 systemRouter.get("/capabilities", (req, res) => {
     const data: CapabilityReport = messageBus.health();
     return sendResponse(res, {
@@ -18,6 +29,17 @@ systemRouter.get("/capabilities", (req, res) => {
     });
 });
 
+/**
+ * @openapi
+ * /system/pipeline-ready:
+ *   get:
+ *     summary: GET /system/pipeline-ready
+ *     tags:
+ *       - System
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 systemRouter.get("/pipeline-ready", (req, res) => {
     const bus = messageBus.getCapabilities();
     const data: PipelineReadiness = {
