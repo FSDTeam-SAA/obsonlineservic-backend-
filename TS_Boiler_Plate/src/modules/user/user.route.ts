@@ -7,6 +7,17 @@ import { UserValidation } from './user.validation.js';
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /user/me:
+ *   get:
+ *     summary: GET /user/me
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     '/me',
     Auth(USER_ROLE.USER, USER_ROLE.ADMIN), // Protect the route
@@ -14,6 +25,17 @@ router.get(
     UserController.getMyProfile
 );
 
+/**
+ * @openapi
+ * /user/me:
+ *   patch:
+ *     summary: PATCH /user/me
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.patch(
     '/me',
     Auth(USER_ROLE.USER, USER_ROLE.ADMIN),
@@ -22,6 +44,17 @@ router.patch(
 );
 
 
+/**
+ * @openapi
+ * /user/get-all-users:
+ *   get:
+ *     summary: GET /user/get-all-users
+ *     tags:
+ *       - User
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.get(
     '/get-all-users',
     Auth(USER_ROLE.ADMIN), // STRICT: Only admins can list all users

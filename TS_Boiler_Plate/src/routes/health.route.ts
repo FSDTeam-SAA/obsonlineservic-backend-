@@ -9,14 +9,9 @@ export const healthRouter = Router();
 
 /**
  * @openapi
- * tags:
- *   - name: System
- *     description: System health and operational endpoints
  * /api/v1/health:
  *   get:
- *     summary: Health check
- *     description: Retrieves the current system health and uptime.
- *     operationId: getSystemHealth
+ *     summary: GET /api/v1/health
  *     tags:
  *       - System
  *     responses:
@@ -35,6 +30,17 @@ healthRouter.get("/health", (_req, res) => {
     });
 });
 
+/**
+ * @openapi
+ * /api/v1/ready:
+ *   get:
+ *     summary: GET /api/v1/ready
+ *     tags:
+ *       - System
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 healthRouter.get("/ready", (_req, res) => {
     const dbReady = isDbReady();
     const redisStatus = isRedisReady();

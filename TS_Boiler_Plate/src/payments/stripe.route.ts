@@ -8,6 +8,17 @@ const router = Router();
  * Stripe webhooks require the RAW body for signature verification.
  * This route uses express.raw() instead of express.json().
  */
+/**
+ * @openapi
+ * /webhooks/stripe:
+ *   post:
+ *     summary: POST /webhooks/stripe
+ *     tags:
+ *       - Webhooks
+ *     responses:
+ *       200:
+ *         description: OK
+ */
 router.post(
     "/stripe",
     express.raw({ type: "application/json" }),
