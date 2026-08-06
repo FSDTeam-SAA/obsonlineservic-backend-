@@ -9,6 +9,8 @@ import { AccommodationUnit } from "../accommodation/accommodation.model.js";
 import { AvailabilityBlock } from "../availability/availability.model.js";
 import { buildAvailabilityOverlapQuery } from "../availability/availability.service.js";
 import { PricingService } from "../pricing/pricing.service.js";
+import { Extra } from "../pricing/pricing.model.js";
+import { HolidayPark } from "../park/park.model.js";
 import { Booking, CancellationRequest, RebookingRequest } from "./booking.model.js";
 import type { CreateBookingInput, IBooking } from "./booking.interface.js";
 
@@ -143,10 +145,73 @@ const getMyBookings = async (userId: string, query: Record<string, unknown>) => 
         defaultSortBy: "createdAt",
         defaultSortOrder: "desc",
     });
-    const queryObj = { userId };
+    const queryObj: Record<string, unknown> = { userId };
+    if (query.timeline === "upcoming") {
+        queryObj.checkIn = { $gte: new Date() };
+    } else if (query.timeline === "past") {
+        queryObj.checkOut = { $lt: new Date() };
+    }
     const data = await Booking.find(queryObj).sort(pagination.sort).skip(pagination.skip).limit(pagination.limit).lean();
     const total = await Booking.countDocuments(queryObj);
     return { meta: { page: pagination.page, limit: pagination.limit, total }, data };
+};
+
+const getBookingDetail = async (bookingId: string, userId: string) => {
+    const booking = await ensureOwnBooking(bookingId, userId);
+    const accommodation = await AccommodationUnit.findOne({ slug: booking.accommodationUnitSlug }).lean();
+    const park = await HolidayPark.findOne({ slug: booking.parkSlug }).lean();
+    return { ...booking, accommodation, park };
+};
+
+const addPostBookingExtra = async (bookingId: string, userId: string, extraSlug: string, quantity: number) => {
+    const booking = await ensureOwnBooking(bookingId, userId);
+    
+    const extra = await Extra.findOne({ slug: extraSlug, isActive: true }).lean();
+    if (!extra) throw AppError.of(StatusCodes.NOT_FOUND, "Extra not found or inactive");
+
+    if (["CANCELLED", "EXPIRED"].includes(booking.status)) {
+        throw AppError.of(StatusCodes.BAD_REQUEST, "Cannot add extras to cancelled or expired bookings");
+    }
+
+    const existingIndex = booking.selectedExtras.findIndex(e => e.slug === extraSlug);
+    let updatedExtras = [...booking.selectedExtras];
+    if (existingIndex >= 0) {
+        updatedExtras[existingIndex].quantity += quantity;
+    } else {
+        updatedExtras.push({ slug: extraSlug, quantity });
+    }
+
+    const priceSnapshot = await PricingService.getPriceQuote({
+        accommodationUnitSlug: booking.accommodationUnitSlug,
+        checkIn: booking.checkIn.toISOString().split("T")[0],
+        checkOut: booking.checkOut.toISOString().split("T")[0],
+        guests: booking.guests,
+        extras: updatedExtras,
+        paymentScheduleType: booking.priceSnapshot.paymentScheduleType
+    });
+
+    const updatedBooking = await Booking.findByIdAndUpdate(
+        bookingId,
+        { selectedExtras: updatedExtras, priceSnapshot },
+        { new: true, runValidators: true }
+    ).lean();
+
+    return updatedBooking;
+};
+
+const getPreArrivalInfo = async (bookingId: string, userId: string) => {
+    const booking = await ensureOwnBooking(bookingId, userId);
+    const park = await HolidayPark.findOne({ slug: booking.parkSlug }).lean();
+    
+    return {
+        bookingReference: booking.bookingReference,
+        checkInTime: "15:00",
+        checkOutTime: "10:00",
+        parkName: park?.name || "EuroParcs",
+        parkMapUrl: park?.images?.[0]?.url || "",
+        arrivalInstructions: `Please proceed to the reception at ${park?.name || "the park"} with your booking reference ${booking.bookingReference}.`,
+        facilities: park?.facilities || [],
+    };
 };
 
 const getAdminBookings = async (query: Record<string, unknown>) => {
@@ -221,6 +286,9 @@ const markBookingPaidByPaymentIntent = async (paymentIntentId: string) => {
 export const BookingService = {
     createBooking,
     getMyBookings,
+    getBookingDetail,
+    addPostBookingExtra,
+    getPreArrivalInfo,
     getAdminBookings,
     requestCancellation,
     requestRebooking,
