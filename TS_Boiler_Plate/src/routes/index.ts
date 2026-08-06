@@ -26,6 +26,7 @@ import {
     PricingRoutes,
 } from '../modules/pricing/pricing.route.js';
 import { SearchRoutes } from '../modules/search/search.route.js';
+import { SupportRoutes } from '../modules/support/support.route.js';
 import { UserRoutes } from '../modules/user/user.route.js';
 import { rootRouter } from './root.routes.js';
 import { healthRouter } from './health.route.js';
@@ -76,6 +77,10 @@ const moduleRoutes = [
     {
         path: '/customer/bookings',
         route: CustomerBookingRoutes,
+    },
+    {
+        path: '/customer/support',
+        route: SupportRoutes,
     },
     {
         path: '/extras',

@@ -73,6 +73,63 @@ customerBookingRouter.use(Auth(USER_ROLE.USER, USER_ROLE.ADMIN, USER_ROLE.SUPER_
  */
 customerBookingRouter.get("/", BookingController.getMyBookings);
 
+/**
+ * @openapi
+ * /customer/bookings/{id}:
+ *   get:
+ *     summary: GET /customer/bookings/{id}
+ *     tags:
+ *       - Customer Bookings
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+customerBookingRouter.get("/:id", validateRequest(BookingValidation.idParamsSchema), BookingController.getBookingDetail);
+
+/**
+ * @openapi
+ * /customer/bookings/{id}/extras:
+ *   post:
+ *     summary: POST /customer/bookings/{id}/extras
+ *     tags:
+ *       - Customer Bookings
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+customerBookingRouter.post("/:id/extras", validateRequest(BookingValidation.addPostBookingExtraSchema), BookingController.addPostBookingExtra);
+
+/**
+ * @openapi
+ * /customer/bookings/{id}/pre-arrival:
+ *   get:
+ *     summary: GET /customer/bookings/{id}/pre-arrival
+ *     tags:
+ *       - Customer Bookings
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+customerBookingRouter.get("/:id/pre-arrival", validateRequest(BookingValidation.idParamsSchema), BookingController.getPreArrivalInfo);
+
 adminBookingRouter.use(Auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN));
 /**
  * @openapi

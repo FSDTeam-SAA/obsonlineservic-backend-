@@ -67,4 +67,11 @@ export const BookingValidation = {
             path: ["requestedCheckOut"],
         }),
     }),
+    addPostBookingExtraSchema: z.object({
+        params: idParams,
+        body: z.object({
+            slug: slugSchema,
+            quantity: z.number().int().min(1),
+        }).strict(),
+    }),
 };

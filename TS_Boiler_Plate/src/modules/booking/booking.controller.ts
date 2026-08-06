@@ -69,10 +69,44 @@ const requestRebooking = catchAsync(async (req, res) => {
     });
 });
 
+const getBookingDetail = catchAsync(async (req, res) => {
+    const { id } = getParams<{ id: string }>(req);
+    const result = await BookingService.getBookingDetail(id, getUserId(req.user));
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        message: "Booking details retrieved successfully",
+        data: result,
+    });
+});
+
+const addPostBookingExtra = catchAsync(async (req, res) => {
+    const { id } = getParams<{ id: string }>(req);
+    const { slug, quantity } = getBody<{ slug: string; quantity: number }>(req);
+    const result = await BookingService.addPostBookingExtra(id, getUserId(req.user), slug, quantity);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        message: "Extra added successfully",
+        data: result,
+    });
+});
+
+const getPreArrivalInfo = catchAsync(async (req, res) => {
+    const { id } = getParams<{ id: string }>(req);
+    const result = await BookingService.getPreArrivalInfo(id, getUserId(req.user));
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        message: "Pre-arrival info retrieved successfully",
+        data: result,
+    });
+});
+
 export const BookingController = {
     createBooking,
     getMyBookings,
     getAdminBookings,
     requestCancellation,
     requestRebooking,
+    getBookingDetail,
+    addPostBookingExtra,
+    getPreArrivalInfo,
 };
