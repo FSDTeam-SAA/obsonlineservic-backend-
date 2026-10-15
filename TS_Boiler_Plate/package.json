@@ -39,9 +39,9 @@
   "description": "",
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.69.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.79.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.211.0",
-    "@opentelemetry/sdk-node": "^0.211.0",
+    "@opentelemetry/sdk-node": "^0.221.0",
     "amqplib": "^0.10.9",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.71.0",
