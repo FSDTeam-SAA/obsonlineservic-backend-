@@ -1,8 +1,8 @@
 node_modules/
-.env
 dist/
 logs/
 *.tsbuildinfo
 .DS_Store
 coverage/
 .eslintcache
+config.bat
